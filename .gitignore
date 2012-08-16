@@ -15,5 +15,5 @@ Makefile
 
 *.make
 obj/
-Samples
+Sample
 *.stl

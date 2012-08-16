@@ -1,7 +1,7 @@
 #include "VoxelData.h"
 
 #include <noise/noise.h>
-
+#include "kernel.h"
 using namespace std;
 
 void VoxelData::initOpenCl() {
@@ -16,13 +16,8 @@ void VoxelData::initOpenCl() {
 			return;
 		}
 
-		//Grab the file
-		//http://stackoverflow.com/questions/2602013/read-whole-ascii-file-into-c-stdstring
-
-		std::ifstream t("kernel.cl");
-		std::string kernelStr((std::istreambuf_iterator<char>(t)),
-			std::istreambuf_iterator<char>());
-
+    std::string kernelStr((const char *)kernel_cl,static_cast<size_t>(kernel_cl_len) );
+    printf("kernel %s \n", kernelStr.c_str());
 		cl_context_properties properties[] =
 			{ CL_CONTEXT_PLATFORM, (cl_context_properties)(platforms[0])(), 0};
 

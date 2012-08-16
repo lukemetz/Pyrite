@@ -9,10 +9,10 @@ solution "Pyrite"
     files { "*.h", "*.cpp" }
     links{'OpenCL', 'gts', 'noise','glib-2.0'}
     buildoptions {"`pkg-config --libs --cflags glib-2.0` " } ---Wall -Wextra
+    prebuildcommands {"xxd -i kernel.cl > kernel.h"}
     configuration "Debug"
       defines { "DEBUG" }
       flags { "Symbols" }
- 
     configuration "Release"
       defines { "NDEBUG" }
       flags { "Optimize" }

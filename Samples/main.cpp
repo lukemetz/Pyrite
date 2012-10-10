@@ -1,9 +1,10 @@
 #include "VoxelData.h"
-
 #include <stdio.h>
 #include <noise/noise.h>
 #include "Node.h"
 #include "TreeGenerator.h"
+
+using namespace pyrite;
 
 int mainLargeTest() {
 	Vec3f point(8,8,4);

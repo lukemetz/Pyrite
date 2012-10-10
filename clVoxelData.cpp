@@ -1,14 +1,14 @@
 #include "VoxelData.h"
-
 #include <noise/noise.h>
 #include "kernel.h"
+
 using namespace std;
+using namespace pyrite;
 
 void VoxelData::initOpenCl() {
 
 	cl_int err = CL_SUCCESS;
 	try {
-
 		std::vector<cl::Platform> platforms;
 		cl::Platform::get(&platforms);
 		if (platforms.size() == 0) {
@@ -32,7 +32,6 @@ void VoxelData::initOpenCl() {
 		program_ = new cl::Program(*context, source);
 
 		program_->build(devices);
-
 	}
 	catch (cl::Error err) {
 		std::cerr

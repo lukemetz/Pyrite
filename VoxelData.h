@@ -37,68 +37,62 @@
 
 
 using namespace Horde3D;
-class VoxelData {
+namespace pyrite {
+  class VoxelData {
 
-public:
+  public:
 
-	VoxelData(Vec3f s);
-	VoxelData(Vec3f s, VoxelData *d1, VoxelData *d2);
-	~VoxelData();
+    VoxelData(Vec3f s);
+    VoxelData(Vec3f s, VoxelData *d1, VoxelData *d2);
+    ~VoxelData();
 
+    void initOpenCl();
 
-	
-	void initOpenCl();
+    void setDensity(Vec3f point, float val);
+    void setDensity(float x, float y, float z, float val);
+    float getDensity(Vec3f point);
+    float getDensity(float x, float y, float z);
+    void addDensity(float x, float y, float z, float val);
+    void unionDensity(float x, float y, float z, float val);
 
+    void marchingCube(); //Turns voxelData ino a mesh, GTSSurface.
+    void coursenSurface(int numVerts); //Refines the mesh to specific amount of verts.
 
+    void exportStl(std::string filePath); //Exports current GTSSurface.
+    void dumpData();
 
-	void setDensity(Vec3f point, float val);
-	void setDensity(float x, float y, float z, float val);
-	float getDensity(Vec3f point);
-	float getDensity(float x, float y, float z);
-	void addDensity(float x, float y, float z, float val);
-	void unionDensity(float x, float y, float z, float val);
+    void clearData();
+    void addSphere(Vec3f pos, float radius);
+    void addParallel(Vec3f pos, Vec3f offset, Vec3f v1, Vec3f v2, Vec3f v3);
 
-	void marchingCube(); //Turns voxelData ino a mesh, GTSSurface.
-	void coursenSurface(int numVerts); //Refines the mesh to specific amount of verts.
-	
-	void exportStl(std::string filePath); //Exports current GTSSurface.
-	void dumpData();
+    void addCylinder(Vec3f pos, Vec3f direction, float radius1, float radius2);
+    void addPlane(Plane plane);
 
-	void clearData();
-	void addSphere(Vec3f pos, float radius);
-	void addParallel(Vec3f pos, Vec3f offset, Vec3f v1, Vec3f v2, Vec3f v3);
+    void makeShell();
 
-	void addCylinder(Vec3f pos, Vec3f direction, float radius1, float radius2);
-	void addPlane(Plane plane);
+    void applyNoiseModule(noise::module::Module *mod, float amount);
 
-	void makeShell();
+    void clAddBox(Vec3f center, Vec3f dx);
+    void clAddSphere(Vec3f pos, float radius);
+    void clAddParallel(Vec3f pos, Vec3f dx, Vec3f v1, Vec3f v2, Vec3f v3);
+    void clSubtractParallel(Vec3f pos, Vec3f dx, Vec3f v1, Vec3f v2, Vec3f v3);
 
-	void applyNoiseModule(noise::module::Module *mod, float amount);
+    void clAddCylinder(Vec3f pos, Vec3f direction, float radius1, float radius2);
 
-
-	void clAddBox(Vec3f center, Vec3f dx);
-	void clAddSphere(Vec3f pos, float radius);
-	void clAddParallel(Vec3f pos, Vec3f dx, Vec3f v1, Vec3f v2, Vec3f v3);
-	void clSubtractParallel(Vec3f pos, Vec3f dx, Vec3f v1, Vec3f v2, Vec3f v3);
-	
-	void clAddCylinder(Vec3f pos, Vec3f direction, float radius1, float radius2);
-
-
-	void addNoise(float frequency, float mult);
-protected:
-	//Helper functunctions for cl
-	cl::Buffer Vec3fToCl(Vec3f val, unsigned int argNum, cl::Kernel &kernel, cl::CommandQueue &queue, cl::Event &event);
-	cl::Buffer floatToCl(float val, unsigned int argNum, cl::Kernel &kernel, cl::CommandQueue &queue, cl::Event &event);
-	cl::Buffer createOutBuffer(cl::Kernel &kernel, cl::CommandQueue &queue, cl::Event &event);
-	void cleanInternalStorage();
-	std::vector<float *> cldata;
-private:
-	float *data;
-	Vec3f size;
-	cl::Program* program_;
-	cl::Context* context;
-	static void write_face(GtsTriangle * t, std::ofstream *file);
-	GtsSurface *surface;
-
-
+    void addNoise(float frequency, float mult);
+  protected:
+    //Helper functunctions for cl
+    cl::Buffer Vec3fToCl(Vec3f val, unsigned int argNum, cl::Kernel &kernel, cl::CommandQueue &queue, cl::Event &event);
+    cl::Buffer floatToCl(float val, unsigned int argNum, cl::Kernel &kernel, cl::CommandQueue &queue, cl::Event &event);
+    cl::Buffer createOutBuffer(cl::Kernel &kernel, cl::CommandQueue &queue, cl::Event &event);
+    void cleanInternalStorage();
+    std::vector<float *> cldata;
+  private:
+    float *data;
+    Vec3f size;
+    cl::Program* program_;
+    cl::Context* context;
+    static void write_face(GtsTriangle * t, std::ofstream *file);
+    GtsSurface *surface;
+  };
 };

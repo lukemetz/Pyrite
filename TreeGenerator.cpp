@@ -1,12 +1,15 @@
 #include "TreeGenerator.h"
 
 #include <cstdlib> //for rand max
+
+using namespace pyrite;
+
 void TreeGenerator::generateTreeNodes(std::vector<Vec3f> attractors, Node* baseNode, float nodeLength, float killDistance) {
 	int iterationsLeft = 300;
 
 	std::map<Node*, std::vector<Vec3f> > closestNode;
 	while (attractors.size() > 0 && iterationsLeft > 0) {
-		//Find which node is closest to each attractor. 
+		//Find which node is closest to each attractor.
 		closestNode.clear();
 		//Gets populated automatically.s
 
@@ -37,7 +40,7 @@ void TreeGenerator::generateTreeNodes(std::vector<Vec3f> attractors, Node* baseN
 
 		//Clear so as to repopulate latter.
 		attractors.clear();
-		
+
 		//for each node
 		std::map<Node*, std::vector<Vec3f> >::iterator cit;
 		for(cit=closestNode.begin(); cit != closestNode.end(); ++cit) {
@@ -51,7 +54,7 @@ void TreeGenerator::generateTreeNodes(std::vector<Vec3f> attractors, Node* baseN
 
 			//Resize
 			sum.normalize();
-			sum *= nodeLength; 
+			sum *= nodeLength;
 			//create the new node with the offset;
 			Vec3f newPos = cit->first->position+sum;
 			//Do some checks to ensure that we are not creating the same node over and over again.
@@ -135,8 +138,8 @@ void TreeGenerator::makeBranches(Node *baseNode, VoxelData * v, float tipRadius,
 					data[parent] = data[it->first];
 				} else {
 					float sum = 0;
-				
-					
+
+
 					for(nit = parent->children.begin(); nit != parent->children.end(); ++nit) {
 						if (data.count(*nit) ==0) {
 							goodToGo = false;
@@ -154,9 +157,9 @@ void TreeGenerator::makeBranches(Node *baseNode, VoxelData * v, float tipRadius,
 					newNodes[it->first] = 1; //throw oneself back into the que to get waited on again.
 				}
 			}
-		}	
+		}
 	}
-	
+
 	/*
 	for(it=tips.begin(); it != tips.end(); ++it) {
 		int level = 0;
@@ -164,10 +167,10 @@ void TreeGenerator::makeBranches(Node *baseNode, VoxelData * v, float tipRadius,
 		while (temp->parent != 0) {
 			//Check if level already exists
 			if (data.count(temp) == 0) {
-				data[temp] = level; 
+				data[temp] = level;
 			} else {
-				data[temp] = max(data[temp], level); 
-			}			
+				data[temp] = max(data[temp], level);
+			}
 			temp = temp->parent;
 			level ++;
 		}

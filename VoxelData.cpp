@@ -3,6 +3,7 @@
 #include <noise/noise.h>
 
 using namespace std;
+using namespace pyrite;
 
 VoxelData::VoxelData(Vec3f s) {
 	size.x = s.x;

@@ -4,6 +4,7 @@
 #include "Node.h"
 #include "TreeGenerator.h"
 
+using namespace Horde3D;
 using namespace pyrite;
 
 int mainLargeTest() {

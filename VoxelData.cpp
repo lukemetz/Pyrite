@@ -4,6 +4,7 @@
 
 using namespace std;
 using namespace pyrite;
+using namespace Horde3D;
 
 VoxelData::VoxelData(Vec3f s) {
 	size.x = s.x;

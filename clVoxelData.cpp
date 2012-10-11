@@ -4,7 +4,7 @@
 
 using namespace std;
 using namespace pyrite;
-
+using namespace Horde3D;
 void VoxelData::initOpenCl() {
 
 	cl_int err = CL_SUCCESS;

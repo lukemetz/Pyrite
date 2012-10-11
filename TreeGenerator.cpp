@@ -3,6 +3,7 @@
 #include <cstdlib> //for rand max
 
 using namespace pyrite;
+using namespace Horde3D;
 
 void TreeGenerator::generateTreeNodes(std::vector<Vec3f> attractors, Node* baseNode, float nodeLength, float killDistance) {
 	int iterationsLeft = 300;

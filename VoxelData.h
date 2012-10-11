@@ -36,21 +36,20 @@
 //class VoxelData;
 
 
-using namespace Horde3D;
 namespace pyrite {
   class VoxelData {
 
   public:
 
-    VoxelData(Vec3f s);
-    VoxelData(Vec3f s, VoxelData *d1, VoxelData *d2);
+    VoxelData(Horde3D::Vec3f s);
+    VoxelData(Horde3D::Vec3f s, VoxelData *d1, VoxelData *d2);
     ~VoxelData();
 
     void initOpenCl();
 
-    void setDensity(Vec3f point, float val);
+    void setDensity(Horde3D::Vec3f point, float val);
     void setDensity(float x, float y, float z, float val);
-    float getDensity(Vec3f point);
+    float getDensity(Horde3D::Vec3f point);
     float getDensity(float x, float y, float z);
     void addDensity(float x, float y, float z, float val);
     void unionDensity(float x, float y, float z, float val);
@@ -62,34 +61,34 @@ namespace pyrite {
     void dumpData();
 
     void clearData();
-    void addSphere(Vec3f pos, float radius);
-    void addParallel(Vec3f pos, Vec3f offset, Vec3f v1, Vec3f v2, Vec3f v3);
+    void addSphere(Horde3D::Vec3f pos, float radius);
+    void addParallel(Horde3D::Vec3f pos, Horde3D::Vec3f offset, Horde3D::Vec3f v1, Horde3D::Vec3f v2, Horde3D::Vec3f v3);
 
-    void addCylinder(Vec3f pos, Vec3f direction, float radius1, float radius2);
-    void addPlane(Plane plane);
+    void addCylinder(Horde3D::Vec3f pos, Horde3D::Vec3f direction, float radius1, float radius2);
+    void addPlane(Horde3D::Plane plane);
 
     void makeShell();
 
     void applyNoiseModule(noise::module::Module *mod, float amount);
 
-    void clAddBox(Vec3f center, Vec3f dx);
-    void clAddSphere(Vec3f pos, float radius);
-    void clAddParallel(Vec3f pos, Vec3f dx, Vec3f v1, Vec3f v2, Vec3f v3);
-    void clSubtractParallel(Vec3f pos, Vec3f dx, Vec3f v1, Vec3f v2, Vec3f v3);
+    void clAddBox(Horde3D::Vec3f center, Horde3D::Vec3f dx);
+    void clAddSphere(Horde3D::Vec3f pos, float radius);
+    void clAddParallel(Horde3D::Vec3f pos, Horde3D::Vec3f dx, Horde3D::Vec3f v1, Horde3D::Vec3f v2, Horde3D::Vec3f v3);
+    void clSubtractParallel(Horde3D::Vec3f pos, Horde3D::Vec3f dx, Horde3D::Vec3f v1, Horde3D::Vec3f v2, Horde3D::Vec3f v3);
 
-    void clAddCylinder(Vec3f pos, Vec3f direction, float radius1, float radius2);
+    void clAddCylinder(Horde3D::Vec3f pos, Horde3D::Vec3f direction, float radius1, float radius2);
 
     void addNoise(float frequency, float mult);
   protected:
     //Helper functunctions for cl
-    cl::Buffer Vec3fToCl(Vec3f val, unsigned int argNum, cl::Kernel &kernel, cl::CommandQueue &queue, cl::Event &event);
+    cl::Buffer Vec3fToCl(Horde3D::Vec3f val, unsigned int argNum, cl::Kernel &kernel, cl::CommandQueue &queue, cl::Event &event);
     cl::Buffer floatToCl(float val, unsigned int argNum, cl::Kernel &kernel, cl::CommandQueue &queue, cl::Event &event);
     cl::Buffer createOutBuffer(cl::Kernel &kernel, cl::CommandQueue &queue, cl::Event &event);
     void cleanInternalStorage();
     std::vector<float *> cldata;
   private:
     float *data;
-    Vec3f size;
+    Horde3D::Vec3f size;
     cl::Program* program_;
     cl::Context* context;
     static void write_face(GtsTriangle * t, std::ofstream *file);

@@ -3,17 +3,15 @@
 #include <vector>
 #include <stdio.h>
 
-using namespace Horde3D;
-
 namespace pyrite {
   class Node;
   class Node {
   public:
-    Vec3f position;
+    Horde3D::Vec3f position;
     Node* parent;
     std::vector<Node*> children;
 
-    Node(Vec3f pos, Node* p) {
+    Node(Horde3D::Vec3f pos, Node* p) {
       parent = p;
       if (p)
         p->addChild(this);

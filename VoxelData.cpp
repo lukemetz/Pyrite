@@ -51,7 +51,7 @@ static void gtsFunc (gdouble ** f, GtsCartesianGrid g, guint k, gpointer data) {
 	}}
 }
 
-void VoxelData::marchingCube() {
+GtsSurface * VoxelData::marchingCube() {
 	int c = 0;
 	GtsCartesianGrid g;
 	gdouble iso;
@@ -85,7 +85,9 @@ void VoxelData::marchingCube() {
 	//gts_isosurface_tetra_bounded (surface, g, func, this, iso);
 	//if (verbose)
 	gts_surface_print_stats (surface, stderr);
+  return surface;
 }
+
 static gboolean stop_func (gdouble cost, guint number, guint * max) {
   printf("%d,\n",number);
   if (number > *max)

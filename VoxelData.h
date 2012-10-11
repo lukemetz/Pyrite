@@ -54,7 +54,7 @@ namespace pyrite {
     void addDensity(float x, float y, float z, float val);
     void unionDensity(float x, float y, float z, float val);
 
-    void marchingCube(); //Turns voxelData ino a mesh, GTSSurface.
+    GtsSurface * marchingCube(); //Turns voxelData ino a mesh, GTSSurface.
     void coursenSurface(int numVerts); //Refines the mesh to specific amount of verts.
 
     void exportStl(std::string filePath); //Exports current GTSSurface.

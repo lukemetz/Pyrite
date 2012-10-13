@@ -6,12 +6,12 @@ using namespace std;
 using namespace pyrite;
 using namespace Horde3D;
 
-VoxelData::VoxelData(Vec3f s) {
+VoxelData::VoxelData(Vec3f s, float kdensity) {
 	size.x = s.x;
 	size.y = s.y;
 	size.z = s.z;
-
-	data = (float*) calloc(static_cast<size_t>(size.x/DENSITY*size.y/DENSITY*size.z/DENSITY), sizeof(float));
+  density = kdensity;
+	data = (float*) calloc(static_cast<size_t>(size.x/density*size.y/density*size.z/density), sizeof(float));
 	clearData();
 }
 
@@ -19,15 +19,16 @@ VoxelData::VoxelData(Vec3f s, VoxelData *d1, VoxelData *d2) {
 	size.x = s.x;
 	size.y = s.y;
 	size.z = s.z;
-	data = (float*) calloc(static_cast<size_t>(size.x/DENSITY*size.y/DENSITY*size.z/DENSITY), sizeof(float));
+	data = (float*) calloc(static_cast<size_t>(size.x/density*size.y/density*size.z/density), sizeof(float));
 	clearData();
+  density = 1.0/32;
 
 }
 
 void VoxelData::clearData() {
-	for(float x =0; x < size.x; x+= DENSITY) {
-		for(float y =0; y < size.y; y+= DENSITY) {
-			for(float z =0; z < size.z; z += DENSITY) {
+	for(float x =0; x < size.x; x+= density) {
+		for(float y =0; y < size.y; y+= density) {
+			for(float z =0; z < size.z; z += density) {
 				setDensity(x,y,z, 9999); //TODO change to min value of float
 			}
 		}
@@ -59,16 +60,16 @@ GtsSurface * VoxelData::marchingCube() {
 	GtsIsoCartesianFunc func = gtsFunc;
 
 	iso = 0; //Iso Value
-	g.nx = (int)size.x/DENSITY;
+	g.nx = (int)size.x/density;
 
 
-	g.ny= (int) size.y/DENSITY;
-	g.nz= (int) size.z/DENSITY;
+	g.ny= (int) size.y/density;
+	g.nz= (int) size.z/density;
 	printf("nz is: %d nz was \n", g.nz);
 	/* interval is [-10:10][-10:10][-10:10] */
-	g.x = 0; g.dx = DENSITY;
-	g.y = 0; g.dy = DENSITY;//size.y/(gdouble) (g.ny - 1);
-	g.z = 0; g.dz = DENSITY;
+	g.x = 0; g.dx = density;
+	g.y = 0; g.dy = density;//size.y/(gdouble) (g.ny - 1);
+	g.z = 0; g.dz = density;
 
 
 	surface = gts_surface_new (gts_surface_class(),
@@ -173,13 +174,13 @@ void VoxelData::setDensity(float x, float y, float z, float val) {
 	assert(y < size.y);
 	assert(z < size.z);
 	//Round to nearest
-	x = static_cast<int>(x/DENSITY)*DENSITY;
-	y = static_cast<int>(y/DENSITY)*DENSITY;
-	z = static_cast<int>(z/DENSITY)*DENSITY;
-	float d = 1/DENSITY;
+	x = static_cast<int>(x/density)*density;
+	y = static_cast<int>(y/density)*density;
+	z = static_cast<int>(z/density)*density;
+	float d = 1/density;
 	/*printf("setting %d has size %d \n",
 		static_cast<int>((x*d+size.x*d*y*d + size.x*d*size.y*d*z*d)),
-		static_cast<size_t>(size.x/DENSITY*size.y/DENSITY*size.z/DENSITY)); */
+		static_cast<size_t>(size.x/density*SIZE.Y/density*size.z/density)); */
 	data[static_cast<int>((x*d+size.x*d*y*d + size.x*d*size.y*d*z*d))] = val;
 }
 float VoxelData::getDensity(Vec3f point) {
@@ -196,10 +197,10 @@ void VoxelData::addDensity(float x, float y, float z, float val) {
 	assert(y < size.y);
 	assert(z < size.z);
 	//Round to nearest
-	x = static_cast<int>(x/DENSITY)*DENSITY;
-	y = static_cast<int>(y/DENSITY)*DENSITY;
-	z = static_cast<int>(z/DENSITY)*DENSITY;
-	float d = 1/DENSITY;
+	x = static_cast<int>(x/density)*density;
+	y = static_cast<int>(y/density)*density;
+	z = static_cast<int>(z/density)*density;
+	float d = 1/density;
 
 	data[static_cast<int>((x*d+size.x*d*y*d + size.x*d*size.y*d*z*d))] =
 		data[static_cast<int>((x*d+size.x*d*y*d + size.x*d*size.y*d*z*d))]+val;
@@ -216,18 +217,18 @@ void VoxelData::unionDensity(float x, float y, float z, float val) {
 	assert(y < size.y);
 	assert(z < size.z);
 	//Round to nearest
-	x = static_cast<int>(x/DENSITY)*DENSITY;
-	y = static_cast<int>(y/DENSITY)*DENSITY;
-	z = static_cast<int>(z/DENSITY)*DENSITY;
-	float d = 1/DENSITY;
+	x = static_cast<int>(x/density)*density;
+	y = static_cast<int>(y/density)*density;
+	z = static_cast<int>(z/density)*density;
+	float d = 1/density;
 
 	data[static_cast<int>((x*d+size.x*d*y*d + size.x*d*size.y*d*z*d))] = min(data[static_cast<int>((x*d+size.x*d*y*d + size.x*d*size.y*d*z*d))],val);
 }
 void VoxelData::addSphere(Vec3f pos, float radius) {
-	for(float x =0; x < size.x; x+= DENSITY) {
-		for(float y =0; y < size.y; y+= DENSITY) {
-			for(float z =0; z < size.z; z += DENSITY) {
-				//printf ("setting density for sphere %f, %f \n", z, DENSITY);
+	for(float x =0; x < size.x; x+= density) {
+		for(float y =0; y < size.y; y+= density) {
+			for(float z =0; z < size.z; z += density) {
+				//printf ("setting density for sphere %f, %f \n", z, density);
 				unionDensity(x,y,z, (pos[0]-x)*(pos[0]-x)+(pos[1]-y)*(pos[1]-y)+(pos[2]-z)*(pos[2]-z)-radius*radius);
 			}
 		}
@@ -235,14 +236,14 @@ void VoxelData::addSphere(Vec3f pos, float radius) {
 }
 
 float VoxelData::getDensity(float x, float y, float z) {
-	x = static_cast<int>(x/DENSITY)*DENSITY;
-	y = static_cast<int>(y/DENSITY)*DENSITY;
-	z = static_cast<int>(z/DENSITY)*DENSITY;
+	x = static_cast<int>(x/density)*density;
+	y = static_cast<int>(y/density)*density;
+	z = static_cast<int>(z/density)*density;
 	//printf("%f x %f sizex %f\n", y, size.x, size.y);
-	float d = 1/DENSITY;
+	float d = 1/density;
 	/*printf("geting %d (%f, %f, %f) has size %d \n",
 		static_cast<int>((x*d+size.x*d*y*d + size.x*d*size.y*d*z*d)), x,y,z,
-		static_cast<size_t>(size.x/DENSITY*size.y/DENSITY*size.z/DENSITY));*/
+		static_cast<size_t>(size.x/density*size.y/density*size.z/density));*/
 	assert(x >= 0);
 	assert(y >= 0);
 	assert(z >= 0);
@@ -250,7 +251,7 @@ float VoxelData::getDensity(float x, float y, float z) {
 	assert(x < size.x);
 	assert(y < size.y);
 	assert(z < size.z);
-	//printf("n %f \n", static_cast<int>((1/DENSITY)*(x+size.x*y + size.x*size.y*z)));
+	//printf("n %f \n", static_cast<int>((1/density)*(x+size.x*y + size.x*size.y*z)));
 	return data[static_cast<int>((x*d+size.x*d*y*d + size.x*d*size.y*d*z*d))];
 
 }
@@ -259,9 +260,9 @@ float VoxelData::getDensity(float x, float y, float z) {
 
 void VoxelData::addParallel(Vec3f pos, Vec3f offset, Vec3f v1, Vec3f v2, Vec3f v3) {
 	float val;
-	for(float x =0; x < size.x; x+= DENSITY) {
-		for(float y =0; y < size.y; y+= DENSITY) {
-			for(float z =0; z < size.z; z += DENSITY) {
+	for(float x =0; x < size.x; x+= density) {
+		for(float y =0; y < size.y; y+= density) {
+			for(float z =0; z < size.z; z += density) {
 				val = max( max(
 					-offset[0]+fabs(-(x-pos[0])*v1[0]-(y-pos[1])*v1[1]-(z-pos[2])*v1[2]),
 					-offset[1]+fabs(-(x-pos[0])*v2[0]-(y-pos[1])*v2[1]-(z-pos[2])*v2[2])
@@ -283,9 +284,9 @@ void VoxelData::addCylinder(Vec3f pos, Vec3f direction, float radius1, float rad
 	p.dist = -dist; //Offset so at pos input.
 	//printf("%f\n",dist);
 	float h = direction.length();
-	for(float x =0; x < size.x; x+= DENSITY) {
-		for(float y =0; y < size.y; y+= DENSITY) {
-			for(float z =0; z < size.z; z += DENSITY) {
+	for(float x =0; x < size.x; x+= density) {
+		for(float y =0; y < size.y; y+= density) {
+			for(float z =0; z < size.z; z += density) {
 				dist = p.distToPoint(Vec3f(x,y,z));
 
 				val = fmax(-pow((radius1*(.5+(dist)/(2*h))+ (radius2*(.5-(dist)/(2*h)))),2)
@@ -299,9 +300,9 @@ void VoxelData::addCylinder(Vec3f pos, Vec3f direction, float radius1, float rad
 
 void VoxelData::addPlane(Plane plane) {
 	float val;
-	for(float x =0; x < size.x; x+= DENSITY) {
-		for(float y =0; y < size.y; y+= DENSITY) {
-			for(float z =0; z < size.z; z += DENSITY) {
+	for(float x =0; x < size.x; x+= density) {
+		for(float y =0; y < size.y; y+= density) {
+			for(float z =0; z < size.z; z += density) {
 				val = -plane.distToPoint(Vec3f(x,y,z));
 				unionDensity(x,y,z,val);
 			}
@@ -311,21 +312,21 @@ void VoxelData::addPlane(Plane plane) {
 
 void VoxelData::makeShell() {
 	float val = 99;
-	for(float x =0; x < size.x; x+= DENSITY) {
-		for(float y =0; y < size.y; y+= DENSITY) {
-			setDensity(x,y,size.z-DENSITY/2.0f,val);
+	for(float x =0; x < size.x; x+= density) {
+		for(float y =0; y < size.y; y+= density) {
+			setDensity(x,y,size.z-density/2.0f,val);
 			setDensity(x,y,0,val);
 		}
 	}
-	for(float x =0; x < size.x; x+= DENSITY) {
-		for(float z =0; z < size.z; z+= DENSITY) {
-			setDensity(x,size.y-DENSITY/2.0f,z,val);
+	for(float x =0; x < size.x; x+= density) {
+		for(float z =0; z < size.z; z+= density) {
+			setDensity(x,size.y-density/2.0f,z,val);
 			setDensity(x,0,z,val);
 		}
 	}
-	for(float z =0; z < size.z; z+= DENSITY) {
-		for(float y =0; y < size.y; y+= DENSITY) {
-			setDensity(size.x-DENSITY/2.0f,y,z,val);
+	for(float z =0; z < size.z; z+= density) {
+		for(float y =0; y < size.y; y+= density) {
+			setDensity(size.x-density/2.0f,y,z,val);
 			setDensity(0,y,z,val);
 		}
 	}
@@ -334,10 +335,10 @@ void VoxelData::makeShell() {
 void VoxelData::addNoise(float frequency, float mult) {
 	noise::module::Perlin perlin;
 	perlin.SetFrequency(frequency);
-	for(float x =0; x < size.x; x+= DENSITY) {
-		for(float y =0; y < size.y; y+= DENSITY) {
-			for(float z =0; z < size.z; z += DENSITY) {
-				//printf ("setting density for sphere %f, %f \n", z, DENSITY);
+	for(float x =0; x < size.x; x+= density) {
+		for(float y =0; y < size.y; y+= density) {
+			for(float z =0; z < size.z; z += density) {
+				//printf ("setting density for sphere %f, %f \n", z, density);
 				//printf("%f\n",perlin.GetValue(x+.001, y+.001, z+.001)*.0001);
 				addDensity(x,y,z, mult*perlin.GetValue(x+.001, y+.001, z+.001));
 			}
@@ -347,10 +348,10 @@ void VoxelData::addNoise(float frequency, float mult) {
 }
 void VoxelData::applyNoiseModule(noise::module::Module *mod, float amount) {
 	noise::module::Perlin perlin;
-	for(float x =0; x < size.x; x+= DENSITY) {
-		for(float y =0; y < size.y; y+= DENSITY) {
-			for(float z =0; z < size.z; z += DENSITY) {
-				//printf ("setting density for sphere %f, %f \n", z, DENSITY);
+	for(float x =0; x < size.x; x+= density) {
+		for(float y =0; y < size.y; y+= density) {
+			for(float z =0; z < size.z; z += density) {
+				//printf ("setting density for sphere %f, %f \n", z, density);
 				//printf("%f\n",perlin.GetValue(x+.001, y+.001, z+.001)*.0001);
 				addDensity(x,y,z, amount*mod->GetValue(x+.001, y+.001, z+.001));
 			}
@@ -361,7 +362,7 @@ void VoxelData::applyNoiseModule(noise::module::Module *mod, float amount) {
 void VoxelData::dumpData() {
 	std::ofstream file;
 	file.open ("dump.txt");
-	for(int i=0; i < size.x/DENSITY*size.y/DENSITY*size.z/DENSITY; i++) {
+	for(int i=0; i < size.x/density*size.y/density*size.z/density; i++) {
 		file << data[i] << ",";
 	}
 	file.close();

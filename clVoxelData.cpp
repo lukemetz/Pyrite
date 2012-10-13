@@ -17,7 +17,6 @@ void VoxelData::initOpenCl() {
 		}
 
     std::string kernelStr((const char *)kernel_cl,static_cast<size_t>(kernel_cl_len) );
-    printf("kernel %s \n", kernelStr.c_str());
 		cl_context_properties properties[] =
 			{ CL_CONTEXT_PLATFORM, (cl_context_properties)(platforms[0])(), 0};
 
@@ -123,7 +122,7 @@ void VoxelData::clAddBox(Vec3f center, Vec3f dx) {
 		cl::Event event;
 		cl::CommandQueue queue(*context, devices[0], 0, &err);
 
-		size_t out_size = (size.x/DENSITY)*(size.y/DENSITY)*(size.z/DENSITY)*sizeof(float);
+		size_t out_size = (size.x/density)*(size.y/density)*(size.z/density)*sizeof(float);
 
 		cl::Buffer cl_out = cl::Buffer(*context, CL_MEM_WRITE_ONLY, out_size, NULL, &err);
 		err = queue.enqueueWriteBuffer(cl_out, CL_TRUE, 0, out_size, data, NULL, &event); //Output directly to the main buffer
@@ -149,9 +148,9 @@ void VoxelData::clAddBox(Vec3f center, Vec3f dx) {
 		cl::Buffer cl_arraySize = Vec3fToCl(size, 3, kernel, queue, event); //Area with some margin of error. makes small boxes go faster.
 		cl::Buffer cl_sectionSize = Vec3fToCl(newSize, 4, kernel, queue, event);
 		cl::Buffer cl_offset = Vec3fToCl(offset, 5, kernel, queue, event);
-		cl::Buffer cl_density = floatToCl(DENSITY, 6, kernel, queue, event);
+		cl::Buffer cl_density = floatToCl(density, 6, kernel, queue, event);
 
-		size_t out_num = (newSize.x/DENSITY)*(newSize.y/DENSITY)*(newSize.z/DENSITY);
+		size_t out_num = (newSize.x/density)*(newSize.y/density)*(newSize.z/density);
 
 		queue.enqueueNDRangeKernel(
 			kernel,
@@ -194,7 +193,7 @@ void VoxelData::clSubtractParallel(Vec3f center, Vec3f dx, Vec3f v1, Vec3f v2, V
 
 
 		cl::CommandQueue queue(*context, devices[0], 0, &err);
-		size_t out_size = (size.x/DENSITY)*(size.y/DENSITY)*(size.z/DENSITY)*sizeof(float);
+		size_t out_size = (size.x/density)*(size.y/density)*(size.z/density)*sizeof(float);
 		cl::Buffer cl_out = cl::Buffer(*context, CL_MEM_WRITE_ONLY, out_size, NULL, &err);
 		err = queue.enqueueWriteBuffer(cl_out, CL_TRUE, 0, out_size, data, NULL, &event); //Output directly to the main buffer
 		kernel.setArg(0,cl_out);
@@ -221,8 +220,8 @@ void VoxelData::clSubtractParallel(Vec3f center, Vec3f dx, Vec3f v1, Vec3f v2, V
 		cl::Buffer cl_arraySize = Vec3fToCl(size, 6, kernel, queue, event); //Area with some margin of error. makes small boxes go faster.
 		cl::Buffer cl_sectionSize = Vec3fToCl(newSize, 7, kernel, queue, event);
 		cl::Buffer cl_offset = Vec3fToCl(offset, 8, kernel, queue, event);
-		cl::Buffer cl_density = floatToCl(DENSITY, 9, kernel, queue, event);
-		size_t out_num = (newSize.x/DENSITY)*(newSize.y/DENSITY)*(newSize.z/DENSITY);
+		cl::Buffer cl_density = floatToCl(density, 9, kernel, queue, event);
+		size_t out_num = (newSize.x/density)*(newSize.y/density)*(newSize.z/density);
 
 		queue.enqueueNDRangeKernel(
 			kernel,
@@ -263,7 +262,7 @@ void VoxelData::clAddParallel(Vec3f center, Vec3f dx, Vec3f v1, Vec3f v2, Vec3f 
 		cl::Event event;
 
 		cl::CommandQueue queue(*context, devices[0], 0, &err);
-		size_t out_size = (size.x/DENSITY)*(size.y/DENSITY)*(size.z/DENSITY)*sizeof(float);
+		size_t out_size = (size.x/density)*(size.y/density)*(size.z/density)*sizeof(float);
 		cl::Buffer cl_out = cl::Buffer(*context, CL_MEM_WRITE_ONLY, out_size, NULL, &err);
 		err = queue.enqueueWriteBuffer(cl_out, CL_TRUE, 0, out_size, data, NULL, &event); //Output directly to the main buffer
 		kernel.setArg(0,cl_out);
@@ -290,9 +289,9 @@ void VoxelData::clAddParallel(Vec3f center, Vec3f dx, Vec3f v1, Vec3f v2, Vec3f 
 		cl::Buffer cl_arraySize = Vec3fToCl(size, 6, kernel, queue, event); //Area with some margin of error. makes small boxes go faster.
 		cl::Buffer cl_sectionSize = Vec3fToCl(newSize, 7, kernel, queue, event);
 		cl::Buffer cl_offset = Vec3fToCl(offset, 8, kernel, queue, event);
-		cl::Buffer cl_density = floatToCl(DENSITY, 9, kernel, queue, event);
+		cl::Buffer cl_density = floatToCl(density, 9, kernel, queue, event);
 
-		size_t out_num = (newSize.x/DENSITY)*(newSize.y/DENSITY)*(newSize.z/DENSITY);
+		size_t out_num = (newSize.x/density)*(newSize.y/density)*(newSize.z/density);
 		queue.enqueueNDRangeKernel(
 			kernel,
 			cl::NullRange,
@@ -333,7 +332,7 @@ void VoxelData::clAddCylinder(Vec3f pos, Vec3f direction, float radius1, float r
 		cl::Event event;
 
 		cl::CommandQueue queue(*context, devices[0], 0, &err);
-		size_t out_size = (size.x/DENSITY)*(size.y/DENSITY)*(size.z/DENSITY)*sizeof(float);
+		size_t out_size = (size.x/density)*(size.y/density)*(size.z/density)*sizeof(float);
 		cl::Buffer cl_out = cl::Buffer(*context, CL_MEM_WRITE_ONLY, out_size, NULL, &err);
 		err = queue.enqueueWriteBuffer(cl_out, CL_TRUE, 0, out_size, data, NULL, &event); //Output directly to the main buffer
 		kernel.setArg(0,cl_out);
@@ -370,11 +369,11 @@ void VoxelData::clAddCylinder(Vec3f pos, Vec3f direction, float radius1, float r
 		cl::Buffer cl_arraySize = Vec3fToCl(size, 7, kernel, queue, event); //Area with some margin of error. makes small boxes go faster.
 		cl::Buffer cl_sectionSize = Vec3fToCl(newSize, 8, kernel, queue, event);
 		cl::Buffer cl_offset = Vec3fToCl(offset, 9, kernel, queue, event);
-		cl::Buffer cl_density = floatToCl(DENSITY, 10, kernel, queue, event);
+		cl::Buffer cl_density = floatToCl(density, 10, kernel, queue, event);
 
 
 
-		size_t out_num = (newSize.x/DENSITY)*(newSize.y/DENSITY)*(newSize.z/DENSITY);
+		size_t out_num = (newSize.x/density)*(newSize.y/density)*(newSize.z/density);
 		queue.enqueueNDRangeKernel(
 			kernel,
 			cl::NullRange,
@@ -412,7 +411,7 @@ void VoxelData::clAddSphere(Vec3f pos, float radius) {
 		cl::Event event;
 
 		cl::CommandQueue queue(*context, devices[0], 0, &err);
-		size_t out_size = (size.x/DENSITY)*(size.y/DENSITY)*(size.z/DENSITY)*sizeof(float);
+		size_t out_size = (size.x/density)*(size.y/density)*(size.z/density)*sizeof(float);
 		cl::Buffer cl_out = cl::Buffer(*context, CL_MEM_WRITE_ONLY, out_size, NULL, &err);
 		err = queue.enqueueWriteBuffer(cl_out, CL_TRUE, 0, out_size, data, NULL, &event); //Output directly to the main buffer
 		kernel.setArg(0,cl_out);
@@ -441,11 +440,11 @@ void VoxelData::clAddSphere(Vec3f pos, float radius) {
 		cl::Buffer cl_arraySize = Vec3fToCl(size, 3, kernel, queue, event); //Area with some margin of error. makes small boxes go faster.
 		cl::Buffer cl_sectionSize = Vec3fToCl(newSize, 4, kernel, queue, event);
 		cl::Buffer cl_offset = Vec3fToCl(offset, 5, kernel, queue, event);
-		cl::Buffer cl_density = floatToCl(DENSITY, 6, kernel, queue, event);
+		cl::Buffer cl_density = floatToCl(density, 6, kernel, queue, event);
 
 
 
-		size_t out_num = (newSize.x/DENSITY)*(newSize.y/DENSITY)*(newSize.z/DENSITY);
+		size_t out_num = (newSize.x/density)*(newSize.y/density)*(newSize.z/density);
 		queue.enqueueNDRangeKernel(
 			kernel,
 			cl::NullRange,

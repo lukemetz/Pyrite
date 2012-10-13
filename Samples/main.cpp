@@ -9,7 +9,7 @@ using namespace pyrite;
 
 int mainLargeTest() {
 	Vec3f point(8,8,4);
-	VoxelData *v = new VoxelData(point);
+	VoxelData *v = new VoxelData(point,1.0/32.0);
 	v->initOpenCl();
 
 	v->addPlane(Plane(0,0,-1,2));
@@ -34,7 +34,7 @@ int mainLargeTest() {
 }
 int main2() {
 	Vec3f point(4,4,1);
-		VoxelData *v = new VoxelData(point);
+		VoxelData *v = new VoxelData(point,1.0/32.0);
 	v->initOpenCl();
 
 	//Block out the blade
@@ -71,7 +71,7 @@ int main2() {
 }
 int main() {
 	Vec3f point(1,1,1);
-	VoxelData *v = new VoxelData(point);
+	VoxelData *v = new VoxelData(point,1.0/32.0);
 	v->initOpenCl();
 	//v->clAddCylinder(Vec3f(.5,.5,.5),Vec3f(.2,.0,0),.3,.1);
 	//v->addSphere(Vec3f(.5,.5,.5),.1);
@@ -110,8 +110,8 @@ int main() {
 int maincreateFloor() {
 	Vec3f point(4,4,1);
 
-	VoxelData *v = new VoxelData(point);
-//	VoxelData *v2 = new VoxelData(point);
+	VoxelData *v = new VoxelData(point,1.0/32.0);
+//	VoxelData *v2 = new VoxelData(point,1.0/32.0);
 //	v->makeSphere(.5);
 	v->initOpenCl();
 
@@ -178,8 +178,8 @@ int maincreateFloor() {
 int makeStoneWall() {
 	Vec3f point(1,1,1);
 
-	VoxelData *v = new VoxelData(point);
-//	VoxelData *v2 = new VoxelData(point);
+	VoxelData *v = new VoxelData(point,1.0/32.0);
+//	VoxelData *v2 = new VoxelData(point,1.0/32.0);
 //	v->makeSphere(.5);
 	v->initOpenCl();
 

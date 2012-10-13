@@ -26,22 +26,13 @@
 
 
 #include <noise/noise.h>
-//#define DENSITY (1.0/8.0f)
-//#define DENSITY (1.0/16.0f)
-#define DENSITY (1.0/32.0f)
-//#define DENSITY (1.0/64.0f)
-//#define DENSITY (1.0/128.0f)
-//#define DENSITY (1.0/(128.0f*1.5f))
-
-//class VoxelData;
-
 
 namespace pyrite {
   class VoxelData {
 
   public:
 
-    VoxelData(Horde3D::Vec3f s);
+    VoxelData(Horde3D::Vec3f s, float kdensity);
     VoxelData(Horde3D::Vec3f s, VoxelData *d1, VoxelData *d2);
     ~VoxelData();
 
@@ -79,6 +70,8 @@ namespace pyrite {
     void clAddCylinder(Horde3D::Vec3f pos, Horde3D::Vec3f direction, float radius1, float radius2);
 
     void addNoise(float frequency, float mult);
+
+    float density;
   protected:
     //Helper functunctions for cl
     cl::Buffer Vec3fToCl(Horde3D::Vec3f val, unsigned int argNum, cl::Kernel &kernel, cl::CommandQueue &queue, cl::Event &event);
@@ -86,6 +79,8 @@ namespace pyrite {
     cl::Buffer createOutBuffer(cl::Kernel &kernel, cl::CommandQueue &queue, cl::Event &event);
     void cleanInternalStorage();
     std::vector<float *> cldata;
+
+
   private:
     float *data;
     Horde3D::Vec3f size;
